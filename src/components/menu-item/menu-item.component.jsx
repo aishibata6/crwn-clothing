@@ -1,13 +1,16 @@
 import React from "react";
+// use withRouter component to pass history props, which is usually only available in Homepage. Menu-item will now return history
+import { withRouter } from "react-router-dom";
 import "./menu-item.styles.scss"; 
 
-const MenuItem = ({ title, imageUrl, size })=> {
+const MenuItem = ({ title, imageUrl, size, history, linkUrl, match })=> {
     // dynamically add className "size" if it exists in state
     const menuItemClass = size ? `${size} menu-item` : "menu-item"; 
-
     return (
     <div 
-    className={menuItemClass}>
+    className={menuItemClass}
+    onClick={()=> history.push(`${match.url}${linkUrl}`)}
+    >
         <div 
             className="background-img"
             style={{ backgroundImage: `url(${imageUrl})`}}
@@ -21,4 +24,4 @@ const MenuItem = ({ title, imageUrl, size })=> {
 }
     
 
-export default MenuItem;
+export default withRouter(MenuItem);
