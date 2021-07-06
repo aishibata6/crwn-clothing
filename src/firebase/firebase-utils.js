@@ -12,7 +12,47 @@ const config = {
     measurementId: "G-QD0X7D3FBL"
   };
 
-  firebase.initializeApp(config);
+  // async function, because we are making API request
+  export const createUserProfileDocument = async (userAuth, additionalData) => {
+    // if user doesn't exist (logged out), just return and do not proceed with parsing
+    if (!userAuth) return;
+
+    // if user exists
+    // queryReference and QuerySnapshot
+
+    //getting query reference with .get method of CRUD operation
+    const userRef = firestore.doc(`users/${userAuth.uid}`); 
+
+    // receive snapShot, which is what we actually receive 
+    const snapShot = await userRef.get();
+
+    // if there is no data, create user (snapShot) .
+    if(!snapShot.exists) {
+        const { displayName, email } = userAuth;
+        const createdAt = new Date();
+
+        try {
+            await userRef.set({
+                displayName,
+                email,
+                createdAt,
+                ...additionalData
+            })
+        } catch (error) {
+            console.log("error creating user", error.message); 
+        }
+    }
+    console.log(snapShot);
+    return userRef;
+
+  }  
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(config);
+  }else {
+    firebase.app(); // if already initialized, use that one
+  }
+  //firebase.initializeApp(config);
 
   export const auth = firebase.auth(); 
   export const firestore = firebase.firestore();
